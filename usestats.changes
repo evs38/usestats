@@ -1,0 +1,40 @@
+v 0.17:  [20041003]
+Neu: eingelesene Daten können gespeichert werden
+Neu: Anzahl der Postings wird auch pro Monat ausgegeben
+Fix: Fehler in Ermittlung der durchschnittlichen Postingzahl behoben
+v 0.16:  [20041002]
+Neu: Option "-h" gibt Hilfetext aus
+Chg: Optionen/Parameter werden jetzt mittels Getopt::Std ausgewertet;
+     dieses Modul wird dementsprechend auch benötigt
+Fix: Anzeige der Postings pro Tag und Ermittlung der durchschnittlichen
+     Postingzahl waren fehlerhaft implementiert und führten zu
+     willkürlichen Ausgaben, sobald Tage völlig ohne Postings
+     "zwischendrin" vorkommen
+v 0.15:  [20040404]
+Neu: neuer Report 'Newsgroupnutzung'
+v 0.14:  [20040215]
+Neu: Spoolverzeichnisse können rekursiv verarbeitet werden
+Fix: Zusammenführen gefoldeter Header mit MIME-words verbessert (?)
+v 0.13:
+Neu: Ausgabe der Prozentwerte als "Balkengraphik"
+v 0.12:
+Neu: MIME-words im Header werden korrekt in einen variablen
+     Ausgabezeichensatz konvertiert
+Chg: Report "Poster (unstrukturiert)" wird defaultmäßig nicht mehr
+     ausgegeben
+Fix: (nicht MBOX-konformer) Postingtrenner von exportierten Agent-
+     Dateien wird jetzt richtig(er) erkannt
+v 0.11:
+Neu: Verarbeitung von data.dat-Dateien des Hamsters (siehe Readme)
+Neu: Summenzeile unter jedem Report
+Neu: neuer Report 'Nutzer pro Newsreader' (siehe Readme)
+Neu: neue Option 'unknownreader' (siehe Readme)
+Neu: weitere Newsreader werden erkannt
+Fix: fuer 'stop' wird als Uhrzeit 23:59:59 des entsprechenden Tages
+     angenommen
+Fix: nur die Analysen werden durchlaufen, fuer die auch Reports
+     generiert werden sollen
+Fix: nicht zu parsendes Date: wird ignoriert
+Fix: nicht zu parsendes From: wird ignoriert
+Fix: User-Agent: wird nur dann ignoriert, wenn Hamster am Anfang der
+     Zeile steht

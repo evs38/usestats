@@ -1,0 +1,318 @@
+NAME
+       usestats - newsgroup statistic generator
+
+SYNOPSIS
+       usestats.pl [-hq] [-c <CONFFILE>] [-r|w <SAVEFILE>]
+
+DESCRIPTION
+       usestats erzeugt Statistiken über Newsgroups, indem vorhandene
+       Postings analysiert und daraus verschiedene Reports erstellt werden.
+
+   Argumente:
+
+       -h
+            Mit dem Argument -h wird eine kurze Hilfe ausgegeben.
+
+       -q
+            Mit dem Argument -q werden alle Statusausgaben auf STDERR
+	    unterdrückt.
+
+       -c
+            Mit dem Argument -c, gefolgt nach Leerzeichen von einem
+	    Dateinamen, kann eine Konfigurationsdatei übergeben werden.
+
+            Beispiel: usestats.pl -c usestats.cfg
+
+       -w
+            Mit dem Argument -w, gefolgt nach Leerzeichen von einem
+	    Dateinamen, können die Daten der eingelesenen Postings
+	    gespeichert werden. Spätere Durchläufe von usestats.pl
+	    können dann auf diese gespeicherten Daten zurückgreifen.
+
+            Beispiel: usestats.pl -w de-admin-misc.txt
+
+       -r
+            Mit dem Argument -r, gefolgt nach Leerzeichen von einem
+	    Dateinamen, können gespeicherte Daten zuvor eingelesener
+	    Postings aus einem früheren Durchlauf von usestats.pl
+	    wieder geladen werden.
+
+            Beispiel: usestats.pl -r de-admin-misc.txt
+
+   Eingabeformate:
+
+       usestats verarbeitet verschiedene Eingabeformate:
+
+       (1) MBOX-Datei
+
+            Die Postings müssen in diesem Fall als Unix-MBOX-Datei vorliegen,
+            also fortlaufen, getrennt jeweils durch eine Zeile der Form "From
+            <user>@<domain> <dow> <mon> <day> <hour>:<minute>:<second>
+            <year>". In dieses Format können etliche Clients die Postings
+            exportieren; abgesehen davon gibt es eine ganze Reihe
+            Konvertierungsprogramme, die MBOX-Dateien ausgeben.
+
+            Die MBOX-Datei wird einfach in usestats gepiped:
+
+            usestats.pl < mypostings.txt
+            usestats.pl -cusestats.cfg < mypostings.txt
+
+       (2) data.dat-Datei (Hamster)
+
+            Eine in dem Mail-und Newsserver "Hamster" fuer Windows-Systeme
+            vorliegende Newsgroup kann auf dieselbe Weise in usestats
+            gepiped werden. Zu diesem Zweck wird die entsprechende
+            data.dat-Datei, die die Postings enthält, aus dem jeweiligen
+            Spoolverzeichnis (...\Groups\news.grup.pe\data.dat) in
+            usestats gepiped:
+
+            usestats.pl -cusestats.cfg < Groups\hamster.de.talk\data.dat
+
+            Zu diesem Zweck muss das zu parsende Format in einer
+            Konfigurationsdatei auf "hamster" umgestellt werden.
+
+       (3) Spoolverzeichnis
+
+            usestats kann auch ein Spoolverzeichnis verarbeiten, in dem jedes
+            Postings als einzelne Datei vorliegt, also bspw. im "traditional
+            spool" von INN. Für diese Art der Verarbeitung muss in der
+            Konfigurationsdatei die Variable "spooldir" gesetzt sein.
+
+            Beispiel: /var/spool/news/de/test
+
+   Reporte:
+
+       (1) Postings pro Tag
+
+            Dieser Report gibt aus, wie viele Postings pro Tag angefallen
+            sind, aufsummiert nach Monaten.
+
+       (2) Newsgroupnutzung
+
+            Dieser Report gibt an, in wecher Newsgroup im Statistikzeitraum
+            wie viele Postings abgesetzt wurden. Crossposts in mehrere Gruppen
+            zugleich werden in jeder Gruppe als einzelnes Posting gezählt.
+
+       (3) Poster (unstrukturiert)
+
+            Dieser Report gibt an, wer im Statistikzeitraum wie viele
+            Postings abgesetzt hat.
+
+       (4) Poster (strukturiert)
+
+            Für diesen Report werden alle Poster mit identischem Realnamen
+            zusammengefasst, unabhängig von ggf. wechselnden Mailadressen.
+
+       (5) Subjects
+
+            Dieser Report fasst zusammen, wie viele Postings zum jeweiligen
+            Subject angefallen sind.
+
+       (6) Newsreader
+
+            Schließlich werden die verwendeten Newsreader statistisch
+            erfassrt.
+
+       (7) Nutzer pro Newsreader
+
+            Auch der Nutzeranteil pro Newsreader kann ausgegeben werden.
+
+   Konfigurationsdatei / Variablen:
+
+       Die Konfigurationsdatei besteht aus Zuweisungen von Werten zu
+       Parametern in der Form
+
+       parameter = wert
+
+       Mit "#" eingeleitete Zeilen sind Kommentare.
+
+       Es können folgende Parameter gesetzt werden:
+
+       spooldir:
+            Das Spoolverzeichnis, falls die Postings von dort gelesen werden
+            sollen. "spooldir" darf nicht gesetzt sein, wenn man eine MBOX in
+            usestats pipen möchte.
+
+            Default: <undef>
+
+       recursive:
+            Dieser Parameter kann den Wert 0 oder 1 annehmen und entscheidet
+            entscheidet darüber, ob das Spoolverzeichnis rekursiv verarbeitet
+            werden soll, d.h. alle darunterliegenden Unterverzeichnisse auch.
+            Ermöglicht die Verarbeitung nicht nur einzelner Newsgroups,
+            sondern auch ganzer Hierarchien oder des kompletten Newsspools des
+            Servers.
+
+            Noch nicht intensiv getestet, Fehler bitte mitteilen!
+
+            Default: 0
+
+       pipeformat:
+            Das Format der Datei, die in usestats gepiped wird.
+            Mögliche Werte sind 'mbox' fuer eine Datei in MBOX-Format oder
+            'hamster' fuer eine .dat-Datei des Hamsters.
+
+            Default: mbox
+
+       charset
+            Der Zeichensatz, in dem die Ausgabe erfolgen soll. In diesen
+            Zeichensatz werden From:- und Subject:-Header für die Ausgabe
+            konvertiert. (Die Ausgaben des Programms selbst umfassen nur
+            7bit-ASCII-Zeichen.)
+
+            Default: ISO-8859-1
+
+       tz:
+            Die lokale Zeitzone. Empfohlen wird die Angabe als Abweichung von
+            GMT, also bspw. "+0200".
+
+            Default: +0200
+
+       newsgroup:
+            Wenn dieser Parameter angegeben wird, werden nur Postings
+            erfasst, die -auch- in diese Newsgroup gegangen sind.
+
+            Default: <undef>
+
+       start:
+            Bei Angabe dieses Parameters werden nur Postings nach diesem
+            Datum erfasst. Die Angabe sollte im ISO-Format erfolgen, also
+            bspw. "2003-10-01" für den 1. Oktober 2003. Die Verwendung von
+            "start"/"stop" verlängert die Programmlaufzeit.
+
+            Default: <undef>
+
+       stop:
+            Bei Angabe dieses Parameters werden nur Postings vor diesem Datum
+            erfasst. Die Angabe sollte im ISO-Format erfolgen, also bspw.
+            "2003-10-31" für den 31. Oktober 2003. Die Verwendung von
+            "start"/"stop" verlängert die Programmlaufzeit.
+
+            Default: <undef>
+
+       day:
+            Dieser Parameter kann den Wert 0 oder 1 annehmen und entscheidet
+            darüber, ob der Report "Postings pro Tag" ausgegeben werden soll.
+
+            Default: 1
+
+       newsgroups:
+            Dieser Parameter kann den Wert 0 oder 1 annehmen und entscheidet
+            darüber, ob der Report "Newsgroupnutzung" ausgegeben werden
+            soll.
+
+            Default: 0
+
+       poster:
+            Dieser Parameter kann den Wert 0 oder 1 annehmen und entscheidet
+            darüber, ob der Report "Poster (strukturiert)" ausgegeben werden
+            soll.
+
+            Default: 1
+
+       posterraw:
+            Dieser Parameter kann den Wert 0 oder 1 annehmen und entscheidet
+            darüber, ob der Report "Poster (unstrukturiert)" ausgegeben
+            werden soll.
+
+            Default: 0
+
+       subject:
+            Dieser Parameter kann den Wert 0 oder 1 annehmen und entscheidet
+            darüber, ob der Report "Subjects (strukturiert)" ausgegeben
+            werden soll.
+
+            Default: 1
+
+       newsreader:
+            Dieser Parameter kann den Wert 0 oder 1 annehmen und entscheidet
+            darüber, ob der Report "Newsreader (strukturiert)" ausgegeben
+            werden soll.
+
+            Default: 1
+
+       nruser:
+            Dieser Parameter kann den Wert 0 oder 1 annehmen und entscheidet
+            darüber, ob der Report "Nutzer pro Newsreader (strukturiert)"
+            ausgegeben werden soll.
+
+            Default: 1
+
+       unknownreader:
+            Dieser Parameter kann den Wert 'show' oder 'noshow' annehmen und
+            entscheidet darüber, ob unbekannte Newsreader mit dem vollen
+            Eintrag der Headerzeile User-Agent/X-Newsreader/X-Mailer
+            angezeigt oder unter "Sonstige" summiert werden sollen.
+
+            Default: show
+
+       poster_width:
+            Dieser Parameter gibt die Spaltenbreite an, die maximal für die
+            Namen der Poster zur Verfügung steht. Analog kann der Wert auch
+            für die anderen Reports - ausser day - gesetzt werden.
+            Der Wert sollte entsprechend der Angabe von poster_graph und der
+            erwünschten maximalen Zeilenlänge gewählt werden.
+
+            Default: 30
+
+       poster_indent:
+            Dieser Parameter gibt die Einrückung der Tabelle an. Analog kann
+            der Wert auch für die anderen Reports - ausser day - gesetzt
+            werden.
+
+            Default: 2
+
+       poster_lines:
+            Dieser Parameter gibt an, wie viele Zeilen die Tabelle haben
+            soll, ob also nur die häufigsten Poster genannt werden sollen. 0
+            gibt die komplette Tabelle aus. Analog kann der Wert auch für die
+            anderen Reports - ausser day - gesetzt werden.
+
+            Default: 0
+
+       poster_cutoff:
+            Dieser Parameter gibt an, wie viele Postings jemand mindestens
+            erreicht haben muss, um in die Tabelle aufgenommen zu werden. 0
+            gibt die komplette Tabelle aus. Analog kann der Wert auch für die
+            anderen Reports - ausser day - gesetzt werden.
+
+            Default: 0
+
+       poster_graph:
+             Dieser Parameter gibt an, wie breit die "grafische" Darstellung
+             der Prozentzahlen werden darf. 0 schaltet die Balkengrafik aus.
+             Analog kann der Wert auch für die anderen Reports - ausser day -
+             gesetzt werden.
+
+             Default: 20
+
+       graphchar:
+             Das Zeichen, das für die Balkengraphik verwendet werden soll.
+
+             Default: #
+
+DEPENDANCIES
+       Die folgenden CPAN-Module werden neben Perl 5.6.1 oder höher benötigt:
+
+            Locale::Recode (und die übrigen Module aus diesem Paket)
+            Date::Manip
+            Mail::Address
+            MIME::Words
+
+BUGS
+       - Fehler und Fehleingaben werden größtenteils nicht abgefangen.
+
+       Weitere Bugs nimmt <thh@inter.net> gerne entgegen.
+
+TODO
+       - HMTL-Templates als weitere Ausgabemöglichkeit sind angedacht.
+
+AUTHOR
+       Thomas Hochstein <thh@inter.net>
+
+VERSION
+       V 0.17 [beta]
+
+COPYRIGHT
+       © 10/2003-10/2004 Thomas Hochstein.
+       See source for license und warranty.
